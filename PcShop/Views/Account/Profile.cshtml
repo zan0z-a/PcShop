@@ -1,0 +1,52 @@
+@model User
+@{
+    ViewData["Title"] = "Профиль";
+    var total = Model.CartItems.Sum(c => c.Product!.Price * c.Quantity);
+}
+
+<h1>Личный кабинет</h1>
+
+<div class="profile">
+    <div class="profile-info">
+        <p><b>Имя:</b> @Model.FirstName</p>
+        <p><b>Фамилия:</b> @Model.LastName</p>
+        <p><b>Почта:</b> @Model.Email</p>
+    </div>
+
+    <h2>Корзина</h2>
+
+    @if (Model.CartItems.Count == 0)
+    {
+        <p class="empty">Корзина пуста. <a href="/">Перейти в каталог</a></p>
+    }
+    else
+    {
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>Товар</th>
+                <th>Цена</th>
+                <th>Кол-во</th>
+                <th>Сумма</th>
+                <th></th>
+            </tr>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td><img src="@item.Product!.ImageUrl" class="table-img" alt="" onerror="this.onerror=null;this.src='https://placehold.co/80x60/2a2f38/888888?text=No';" /></td>
+                    <td><a href="/Home/Details/@item.ProductId">@item.Product.Name</a></td>
+                    <td>@item.Product.Price.ToString("N0") ₽</td>
+                    <td>@item.Quantity</td>
+                    <td>@((item.Product.Price * item.Quantity).ToString("N0")) ₽</td>
+                    <td>
+                        <form asp-controller="Cart" asp-action="Remove" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn-delete">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </table>
+        <div class="total">Итого: @total.ToString("N0") ₽</div>
+    }
+</div>

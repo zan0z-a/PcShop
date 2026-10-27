@@ -1,0 +1,87 @@
+@inject PcShop.Data.AppDbContext Db
+@{
+    var layoutCategories = Db.Categories.ToList();
+    var selectedCategory = Context.Request.Query["categoryId"].ToString();
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PC Market</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="topbar">
+        <div class="container topbar-inner">
+            <span>Москва</span>
+            <div class="topbar-links">
+                <a href="/Reviews">Отзывы о магазине</a>
+                <span>8 800 000-00-00</span>
+            </div>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">PC<span>Market</span></a>
+
+            <form action="/" method="get" class="search">
+                <select name="categoryId">
+                    <option value="">Все категории</option>
+                    @foreach (var c in layoutCategories)
+                    {
+                        <option value="@c.Id" selected="@(selectedCategory == c.Id.ToString())">@c.Name</option>
+                    }
+                </select>
+                <input type="text" name="search" placeholder="Поиск по каталогу" value="@Context.Request.Query["search"]" />
+                <button type="submit">Найти</button>
+            </form>
+
+            <div class="header-links">
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    if (User.IsInRole("Admin"))
+                    {
+                        <a href="/Admin">Админ панель</a>
+                    }
+                    <a href="/Account/Profile">Корзина</a>
+                    <a href="/Account/Profile">@User.Identity.Name</a>
+                    <form action="/Account/Logout" method="post" class="inline">
+                        <button type="submit" class="link-btn">Выйти</button>
+                    </form>
+                }
+                else
+                {
+                    <a href="/Account/Login">Войти</a>
+                    <a href="/Account/Register">Регистрация</a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <nav class="menu">
+        <div class="container menu-inner">
+            <a href="/" class="menu-catalog">Каталог товаров</a>
+            @foreach (var c in layoutCategories)
+            {
+                <a href="/?categoryId=@c.Id">@c.Name</a>
+            }
+        </div>
+    </nav>
+
+    <main class="container main">
+        @if (TempData["Message"] != null)
+        {
+            <div class="message">@TempData["Message"]</div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            PC Market, учебный проект. Изображения взяты с Wikimedia Commons.
+        </div>
+    </footer>
+</body>
+</html>

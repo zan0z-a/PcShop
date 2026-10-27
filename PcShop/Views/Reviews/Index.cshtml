@@ -1,0 +1,51 @@
+@model List<Review>
+@{
+    ViewData["Title"] = "Отзывы";
+}
+
+<h1>Отзывы о магазине</h1>
+
+@if (User.Identity!.IsAuthenticated)
+{
+    <form asp-action="Add" method="post" class="review-form">
+        <label>Ваш отзыв</label>
+        <textarea name="text" rows="4"></textarea>
+        <label>Оценка</label>
+        <select name="rating">
+            <option value="5">5 - Отлично</option>
+            <option value="4">4 - Хорошо</option>
+            <option value="3">3 - Нормально</option>
+            <option value="2">2 - Плохо</option>
+            <option value="1">1 - Ужасно</option>
+        </select>
+        <button type="submit" class="btn-buy">Отправить</button>
+    </form>
+}
+else
+{
+    <p class="hint"><a href="/Account/Login">Войдите</a>, чтобы оставить отзыв</p>
+}
+
+@if (Model.Count == 0)
+{
+    <p class="empty">Отзывов пока нет</p>
+}
+
+@foreach (var r in Model)
+{
+    <div class="review">
+        <div class="review-head">
+            <b>@r.User?.FirstName @r.User?.LastName</b>
+            <span class="review-date">@r.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+            <span class="review-rating">Оценка: @r.Rating из 5</span>
+        </div>
+        <p>@r.Text</p>
+        @if (User.IsInRole("Admin"))
+        {
+            <form asp-action="Delete" method="post">
+                <input type="hidden" name="id" value="@r.Id" />
+                <button type="submit" class="btn-delete">Удалить отзыв</button>
+            </form>
+        }
+    </div>
+}

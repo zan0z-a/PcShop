@@ -1,0 +1,64 @@
+@model List<Product>
+@{
+    ViewData["Title"] = "Каталог";
+    var categories = (List<Category>)ViewBag.Categories;
+    int? currentCategory = ViewBag.CategoryId;
+    var current = categories.FirstOrDefault(c => c.Id == currentCategory);
+    var title = current == null ? "Комплектующие для ПК" : current.Name;
+}
+
+<div class="breadcrumbs"><a href="/">Главная</a> / <span>@title</span></div>
+<h1>@title <span class="count">@Model.Count товаров</span></h1>
+
+<div class="catalog">
+    <aside class="sidebar">
+        <div class="sidebar-title">Категории</div>
+        <ul>
+            <li><a href="/" class="@(currentCategory == null ? "active" : "")">Все товары</a></li>
+            @foreach (var c in categories)
+            {
+                <li><a href="/?categoryId=@c.Id" class="@(currentCategory == c.Id ? "active" : "")">@c.Name</a></li>
+            }
+        </ul>
+    </aside>
+
+    <section class="content">
+        @if (ViewBag.Search != null)
+        {
+            <p class="search-info">Результаты поиска: "@ViewBag.Search"</p>
+        }
+
+        @if (Model.Count == 0)
+        {
+            <p class="empty">Ничего не найдено</p>
+        }
+
+        <div class="products">
+            @foreach (var p in Model)
+            {
+                <div class="card">
+                    <a href="/Home/Details/@p.Id" class="card-img">
+                        <img src="@p.ImageUrl" alt="@p.Name" onerror="this.onerror=null;this.src='https://placehold.co/400x300/2a2f38/888888?text=No+image';" />
+                    </a>
+                    <div class="card-category">@p.Category?.Name</div>
+                    <a href="/Home/Details/@p.Id" class="card-title">@p.Name</a>
+                    <div class="card-stock">В наличии</div>
+                    <div class="card-bottom">
+                        <div class="card-price">@p.Price.ToString("N0") ₽</div>
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <form asp-controller="Cart" asp-action="Add" method="post">
+                                <input type="hidden" name="productId" value="@p.Id" />
+                                <button type="submit" class="btn-buy">Купить</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a href="/Account/Login" class="btn-buy">Купить</a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+</div>

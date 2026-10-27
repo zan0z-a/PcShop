@@ -1,0 +1,31 @@
+@model Product
+@{
+    ViewData["Title"] = "Новый товар";
+}
+
+<div class="form-box wide">
+    <h1>Новый товар</h1>
+    <form asp-action="Create" method="post">
+        <label>Название</label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" class="error"></span>
+
+        <label>Категория</label>
+        <select asp-for="CategoryId" asp-items="ViewBag.Categories"></select>
+
+        <label>Цена (руб.)</label>
+        <input asp-for="Price" type="number" />
+        <span asp-validation-for="Price" class="error"></span>
+
+        <label>Ссылка на картинку</label>
+        <input asp-for="ImageUrl" />
+        <span asp-validation-for="ImageUrl" class="error"></span>
+
+        <label>Описание</label>
+        <textarea asp-for="Description" rows="5"></textarea>
+        <span asp-validation-for="Description" class="error"></span>
+
+        <button type="submit" class="btn-buy big">Сохранить</button>
+    </form>
+    <p class="hint"><a href="/Admin">Назад</a></p>
+</div>

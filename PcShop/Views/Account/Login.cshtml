@@ -1,0 +1,22 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<div class="form-box">
+    <h1>Вход</h1>
+    <form asp-action="Login" method="post">
+        <div asp-validation-summary="ModelOnly" class="error"></div>
+
+        <label>Почта</label>
+        <input asp-for="Email" type="email" />
+        <span asp-validation-for="Email" class="error"></span>
+
+        <label>Пароль</label>
+        <input asp-for="Password" type="password" />
+        <span asp-validation-for="Password" class="error"></span>
+
+        <button type="submit" class="btn-buy big">Войти</button>
+    </form>
+    <p class="hint">Нет аккаунта? <a href="/Account/Register">Регистрация</a></p>
+</div>
